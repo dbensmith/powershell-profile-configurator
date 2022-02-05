@@ -1,6 +1,6 @@
 # powershell-profile-configurator
 
-Configures the user's PowerShell profile for both Windows PowerShell and PowerShell 7+. Personalised for the author's use. Backs up existing profiles by making a copy in the same folder as the original.
+Configures the user's PowerShell profile for both Windows PowerShell and PowerShell 7+. Backs up existing profiles by making a copy in the same folder as the original. Personalised for the author's use; fork and customize to your heart's content!
 
 ## How To Use
 
