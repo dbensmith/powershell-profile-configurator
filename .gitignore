@@ -1,0 +1,20 @@
+### PowerShell ###
+# Created by https://www.toptal.com/developers/gitignore
+# Edit at https://www.toptal.com/developers/gitignore?templates=powershell
+# Exclude packaged modules
+*.zip
+
+# Exclude .NET assemblies from source
+*.dll
+
+# End of https://www.toptal.com/developers/gitignore/api/powershell
+
+### Font ###
+# Created by https://www.toptal.com/developers/gitignore/api/font
+# Edit at https://www.toptal.com/developers/gitignore?templates=font
+*.fnt
+*.fon
+*.otf
+*.ttf
+
+# End of https://www.toptal.com/developers/gitignore/api/font
