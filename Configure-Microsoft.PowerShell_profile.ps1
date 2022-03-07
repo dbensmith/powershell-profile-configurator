@@ -38,7 +38,7 @@ If ((Get-PSRepository -Name PSGallery).InstallationPolicy -ne "Trusted") {
 }
 
 # Install the modules required to configure PowerShell prompts
-$RequiredModules = @("Terminal-Icons","posh-git","oh-my-posh")
+$RequiredModules = @("Terminal-Icons","posh-git")
 
 foreach ($Module in $RequiredModules) {
     try {
@@ -52,6 +52,9 @@ foreach ($Module in $RequiredModules) {
         Import-Module $Module
     }
 }
+
+# Install oh-my-posh using winget, silently
+winget install JanDeDobbeleer.OhMyPosh -h --accept-source-agreements --accept-package-agreements
 
 # Configure Windows Terminal Profile
 # This may be harder because it's safer to add/modify settings in the JSON than it is to replace the whole file, due to differing terminal profiles per-system
