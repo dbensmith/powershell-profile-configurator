@@ -22,7 +22,7 @@ foreach ($ProfilePath in $Profiles) {
             $ProfilePathBak = "$ProfilePath.bak$i"
         }
         Write-Output "Backing up old profile . . ."
-        Copy-Item -Path $SourceProfile -Destination $ProfilePathBak -Verbose
+        Copy-Item -Path $ProfilePath -Destination $ProfilePathBak -Verbose
     } Else {
         Write-Information "$ProfilePath does not exist, so no backup is required."
     }
