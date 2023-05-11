@@ -39,4 +39,5 @@ foreach ($Module in $RequiredModules) {
 
 # Set oh-my-posh theme and enable use of posh-git
 $env:POSH_GIT_ENABLED = $true
-oh-my-posh --init --shell pwsh --config $env:POSH_THEMES_PATH\$Theme.omp.json | Invoke-Expression
+& ([ScriptBlock]::Create((oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\$Theme.omp.json" --print) -join "`n")) # Avoids misinformed A/V detections
+#oh-my-posh init shell pwsh --config $env:POSH_THEMES_PATH\$Theme.omp.json | Invoke-Expression
