@@ -1,3 +1,6 @@
+# Resolve issues with Oh My Posh after the release of PowerShell 7.4
+[Console]::OutputEncoding = [Text.Encoding]::UTF8
+
 # Enable TLS 1.2 and TLS 1.3 security protocols
 try {
     $SecurityProtocols = [Net.ServicePointManager]::SecurityProtocol
