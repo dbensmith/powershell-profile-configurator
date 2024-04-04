@@ -34,7 +34,7 @@ foreach ($ProfilePath in $Profiles) {
 # Set PSGallery to Trusted
 If ((Get-PSRepository -Name PSGallery).InstallationPolicy -ne "Trusted") {
     Write-Output "PSGallery repository is not trusted. Setting PSGallery to Trusted . . ."
-    Set-PSRepository -Name PSGallery -InstallationPolicy Trusted -Force
+    Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
 }
 
 # Install the modules required to configure PowerShell prompts
