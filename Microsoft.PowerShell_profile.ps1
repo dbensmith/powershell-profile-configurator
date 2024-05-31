@@ -18,9 +18,9 @@ catch {
 }
 Write-Information ("Service point security protocols in this session: " + [Net.ServicePointManager]::SecurityProtocol)
 
-# Terminal Icons has a font prerequisite.
-# You can install any Nerd Font available at https://www.nerdfonts.com.
-# As of April 2024, Microsoft now bundles a Nerd Fonts variant of Cascadia Code. Configure fonts in Windows Terminal and VS Code.
+# Terminal Icons has a Nerd Font prerequisite Install any Nerd Font from https://www.nerdfonts.com.
+# As of April 2024, Microsoft now offers an official Nerd Font variant of Cascadia Code.
+# Make sure to configure your new fonts in Windows Terminal and VS Code.
 
 $RequiredModules = @("Terminal-Icons","posh-git")
 $Theme = "slimfat"

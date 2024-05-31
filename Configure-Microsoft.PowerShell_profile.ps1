@@ -1,9 +1,9 @@
 #Requires -RunAsAdministrator
 
-# Install any fonts required for profile and terminal configuration
+# Install the Cascadia Code font for use in profile and terminal configuration
 # Note that this action forcibly downloads and installs fonts, even if they already exist
 # This is also the dependent action for -RunAsAdministrator
-& "$PSScriptRoot\Configure-WindowsFonts.ps1" -Download -FontList "$PSScriptRoot\Configure-WindowsFonts-List.csv"
+& "$PSScriptRoot\Install-CascadiaCode.ps1"
 Write-Output ""
 
 # Set variables
