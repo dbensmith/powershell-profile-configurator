@@ -1,92 +1,39 @@
-﻿<#
+<#
 .SYNOPSIS
-	Downloads a list of fonts and then install them. Supports OpenText and TrueType fonts.
+    Downloads and installs the latest version of the Cascadia Code font from Microsoft on GitHub.
 
 .DESCRIPTION
-	This script will install OTF and TTF fonts that exist in the specified directory.
-	
-	Use -Path to specify a directory. If no directory is specified, the script will recursively find and install fonts within the script root.
-	Use -Download to attempt to read and download a list of font URIs from the file specified by $FontList (Default: Configure-WindowsFonts-List.csv).
-	
+    This script downloads the latest version of Cascadia Code font from GitHub, extracts the 'ttf' folder,
+    removes the 'ttf\static' subfolder, installs the remaining .ttf files, and cleans up all temporary files.
+
+.EXAMPLE
+    PS C:\> .\InstallCascadiaCode.ps1
+
 .NOTES
-	Created:	2021-06-24 (Mick Pletcher)
-	Modified:	2022-01-01 (Benjamin Smith)
-	Filename:	Configure-WindowsFonts.ps1
-
-.LINK
-	Original Source: https://github.com/MicksITBlogs/PowerShell/blob/master/InstallFonts.ps1
+    Must be run as Administrator.
 #>
-#Requires -RunAsAdministrator
-
-param (
-	[Parameter(Mandatory = $false)][ValidateNotNullOrEmpty()][System.IO.FileInfo]$Path = $PSScriptRoot,
-	[Parameter(Mandatory = $false)][ValidateNotNullOrEmpty()]$FontList = "$PSScriptRoot\Configure-WindowsFonts-List.csv",
-	[Parameter(Mandatory = $false)][Switch]$Download
-)
-
-function Invoke-DownloadFont {
-	<#
-	.SYNOPSIS
-	Font Downloader
-
-	.DESCRIPTION
-	Downloads font files from the URIs specified in the target CSV.
-
-	.LINK
-	Source: https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts
-	#>
-
-	param (
-		[Parameter(Mandatory = $false)][ValidateNotNullOrEmpty()][System.IO.FileInfo]$Path = $PSScriptRoot,
-		[Parameter(Mandatory = $false)][ValidateNotNullOrEmpty()][Array[]]$Fonts = (Import-Csv $FontList)
-	)
-	
-	If (-not (Test-Path "$Path\src" ) ) {
-		New-Item -ItemType Directory -Path "$Path\src" -Force
-	}
-
-	foreach ($Font in $Fonts) {
-		$DestinationPath = "$Path\src\" + $Font.Destination
-		If (Test-Path $DestinationPath) {
-			Remove-Item $DestinationPath -Force -ErrorAction SilentlyContinue
-		}
-		Write-Host ("Downloading" + [char]32 + $Font.Source + [char]32 + ". . . ") -NoNewLine
-		# Download the font file
-		Start-BitsTransfer -Source $Font.Source -Destination $DestinationPath -DisplayName $Font.Destination -TransferType Download
-		# Test to see if the font file was downloaded successfully
-		If (Test-Path $DestinationPath) {
-			Write-Host ("Success") -ForegroundColor Green
-		}
-		else {
-			Write-Host ("Failed") -ForegroundColor Red
-		}
-	}
-	Write-Output ""
-}
+#requires -RunAsAdministrator
 
 function Install-Font {
 	<#
 	.SYNOPSIS
 		Install a font
-	
+
 	.DESCRIPTION
-		This function will attempt to install the font by copying it to the $env:SystemRoot\fonts directory and then registering it in the registry. This also outputs the status of each step for easy tracking. 
-	
+		This function will attempt to install the font by copying it to the $env:SystemRoot\fonts directory and then registering it in the registry. This also outputs the status of each step for easy tracking.
+
 	.PARAMETER FontFile
 		Name of the Font File to install
-	
+
 	.EXAMPLE
 				PS C:\> Install-Font -FontFile $value1
-	
-	.NOTES
-		Additional information about the function.
-	#>
+    #>
 
 	param
 	(
 		[Parameter(Mandatory = $true)][ValidateNotNullOrEmpty()][System.IO.FileInfo]$FontFile
 	)
-	
+
 	$FontRegistryPath = "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Fonts"
 
 	# Get Font Name from the File's Extended Attributes
@@ -148,7 +95,7 @@ function Install-Font {
 			}
 			$AddKey = $false
 		}
-		
+
 	}
  catch {
 		If ($Copy -eq $true) {
@@ -164,12 +111,37 @@ function Install-Font {
 	Write-Host
 }
 
-# Download fonts
-If ($Download.IsPresent) {
-	Invoke-DownloadFont
+# Define the repository details
+$UserRepo = "microsoft/cascadia-code"
+$ApiUrl = "https://api.github.com/repos/$UserRepo/releases/latest"
+
+# Find the latest release
+$LatestRelease = Invoke-RestMethod -Uri $ApiUrl
+
+# Find the zip asset and download it
+$ZipAsset = $LatestRelease.assets | Where-Object { $_.name -match "CascadiaCode-.*\.zip" }
+$ZipUrl = $ZipAsset.browser_download_url
+$ZipFile = "$PWD\" + $ZipAsset.name
+Invoke-WebRequest -Uri $ZipUrl -OutFile $ZipFile
+
+# Extract the ttf folder
+$ExtractPath = "$PWD\CascadiaCode"
+Expand-Archive -LiteralPath $ZipFile -DestinationPath $ExtractPath
+
+# Remove the static subfolder
+$StaticFolder = "$ExtractPath\ttf\static"
+if (Test-Path $StaticFolder) {
+    Remove-Item -Recurse -Force $StaticFolder
 }
 
-# Get a list of all font files relative to this script and parse through the list
-foreach ($FontItem in (Get-ChildItem -Path $Path -Recurse | Where-Object { ($_.Name -like "*.ttf") -or ($_.Name -like "*.otf") } ) ) {
-	Install-Font -FontFile $FontItem
+# Install each ttf file in the ttf folder using provided function
+$TtfFiles = Get-ChildItem -Path "$ExtractPath\ttf" -Filter *.ttf
+foreach ($TtfFile in $TtfFiles) {
+    Install-Font -FontFile $TtfFile
 }
+
+# Clean up extracted files and downloaded zip file
+Remove-Item -Recurse -Force $ExtractPath
+Remove-Item -LiteralPath $ZipFile
+
+
