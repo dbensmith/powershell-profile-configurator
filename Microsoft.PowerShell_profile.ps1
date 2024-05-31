@@ -19,12 +19,8 @@ catch {
 Write-Information ("Service point security protocols in this session: " + [Net.ServicePointManager]::SecurityProtocol)
 
 # Terminal Icons has a font prerequisite.
-# Install any Nerd Font available at https://www.nerdfonts.com.
-# Currently using Cousine NF for PowerShell and UbuntuMono NF for Pengwin. Configure in Windows Terminal and VS Code.
-
-# Powerline for Windows PowerShell has font and module prerequisites.
-# https://docs.microsoft.com/en-us/windows/terminal/tutorials/powerline-setup
-# Nerd Fonts fully support Powerline.
+# You can install any Nerd Font available at https://www.nerdfonts.com.
+# As of April 2024, Microsoft now bundles a Nerd Fonts variant of Cascadia Code. Configure fonts in Windows Terminal and VS Code.
 
 $RequiredModules = @("Terminal-Icons","posh-git")
 $Theme = "slimfat"
