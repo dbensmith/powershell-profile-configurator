@@ -31,6 +31,10 @@ foreach ($Module in $RequiredModules) {
     }
     catch {
         Write-Warning "Couldn't import $Module. Installing now."
+        if ($Module = "Terminal-Icons") {
+            # https://github.com/devblackops/Terminal-Icons/issues/99#issuecomment-1478390425
+            Remove-Item -Path "$env:USERPROFILE\AppData\Roaming\powershell\Community\Terminal-Icons" -Recurse -Force -Verbose
+        }
         Install-Module $Module -Scope CurrentUser -Force
         Import-Module $Module
     }
