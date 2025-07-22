@@ -43,3 +43,6 @@ foreach ($Module in $RequiredModules) {
 $Theme = "slimfat"
 $env:POSH_GIT_ENABLED = $true
 & ([ScriptBlock]::Create((oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\$Theme.omp.json" --print) -join "`n")) # Avoids false positives by A/V and EDR tools
+
+# Enable DSCv3 completion. Requires DSCv3 to be installed and completion script created via DSCv3.
+. ~/dsc_completion.ps1

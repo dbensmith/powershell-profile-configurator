@@ -54,7 +54,12 @@ foreach ($Module in $RequiredModules) {
 }
 
 # Install oh-my-posh using winget, silently
-winget install JanDeDobbeleer.OhMyPosh -h --accept-source-agreements --accept-package-agreements
+winget install JanDeDobbeleer.OhMyPosh --scope machine --force -h --accept-source-agreements --accept-package-agreements
+
+# Install DSCv3 using winget, silently
+winget install Microsoft.DSC --scope machine --force -h --accept-source-agreements --accept-package-agreements
+# Configure DSCv3 PowerShell completion
+dsc completer powershell | Out-File '~/dsc_completion.ps1'
 
 # Configure Windows Terminal Profile
 # This may be harder because it's safer to add/modify settings in the JSON than it is to replace the whole file, due to differing terminal profiles per-system
