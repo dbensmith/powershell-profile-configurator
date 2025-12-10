@@ -47,7 +47,7 @@ function Install-Font {
 			".otf" { $FontName = $FontName + [char]32 + "(OpenType)" }
 		}
 		$Copy = $true
-		Write-Host ("Copying" + [char]32 + $FontFile.Name + [char]32 + "to $env:SystemRoot\Fonts\ . . . ") -NoNewLine
+		Write-Information -MessageData ("Copying" + [char]32 + $FontFile.Name + [char]32 + "to $env:SystemRoot\Fonts\ . . . ") -InformationAction Continue
 		# If a matching font file already exists in the system fonts folder, delete the target file
 		If (Test-Path ("$env:SystemRoot\Fonts\" + $FontFile.Name)) {
 			Remove-Item -Path ("$env:SystemRoot\Fonts\" + $FontFile.Name) -Force
@@ -56,42 +56,41 @@ function Install-Font {
 		Copy-Item -Path $FontFile.FullName -Destination ("$env:SystemRoot\Fonts\" + $FontFile.Name) -Force -ErrorAction SilentlyContinue
 		# Test if the font was successfully copied over
 		If (Test-Path ("$env:SystemRoot\Fonts\" + $FontFile.Name)) {
-			Write-Host ("Success") -Foreground Green
+			Write-Information -MessageData "Success" -InformationAction Continue
 		}
 		else {
-			Write-Host ("Failed") -ForegroundColor Red
+			Write-Error -Message "Failed to copy font file" -ErrorAction Continue
 		}
 		$Copy = $false
 		# Test if font registry entry exists
 		If (Get-ItemProperty -Name $FontName -Path $FontRegistryPath -ErrorAction SilentlyContinue) {
 			# Test if the registry entry matches the font file name
 			If ((Get-ItemPropertyValue -Name $FontName -Path $FontRegistryPath) -eq $FontFile.Name) {
-				Write-Host ("Adding" + [char]32 + $FontName + [char]32 + "to the registry . . . ") -NoNewline
-				Write-Host ("Success") -ForegroundColor Green
+				Write-Information -MessageData ("Adding" + [char]32 + $FontName + [char]32 + "to the registry . . . Success") -InformationAction Continue
 			}
 			else {
 				$AddKey = $true
 				Remove-ItemProperty -Name $FontName -Path $FontRegistryPath -Force
-				Write-Host ("Adding" + [char]32 + $FontName + [char]32 + "to the registry . . . ") -NoNewline
+				Write-Information -MessageData ("Adding" + [char]32 + $FontName + [char]32 + "to the registry . . . ") -InformationAction Continue
 				$null = New-ItemProperty -Name $FontName -Path $FontRegistryPath -PropertyType string -Value $FontFile.Name -Force -ErrorAction SilentlyContinue
 				If ((Get-ItemPropertyValue -Name $FontName -Path $FontRegistryPath) -eq $FontFile.Name) {
-					Write-Host ("Success") -ForegroundColor Green
+					Write-Information -MessageData "Success" -InformationAction Continue
 				}
 				else {
-					Write-Host ("Failed") -ForegroundColor Red
+					Write-Error -Message "Failed to register font in registry" -ErrorAction Continue
 				}
 				$AddKey = $false
 			}
 		}
 		else {
 			$AddKey = $true
-			Write-Host ("Adding" + [char]32 + $FontName + [char]32 + "to the registry . . . ") -NoNewline
+			Write-Information -MessageData ("Adding" + [char]32 + $FontName + [char]32 + "to the registry . . . ") -InformationAction Continue
 			$null = New-ItemProperty -Name $FontName -Path $FontRegistryPath -PropertyType string -Value $FontFile.Name -Force -ErrorAction SilentlyContinue
 			If ((Get-ItemPropertyValue -Name $FontName -Path $FontRegistryPath) -eq $FontFile.Name) {
-				Write-Host ("Success") -ForegroundColor Green
+				Write-Information -MessageData "Success" -InformationAction Continue
 			}
 			else {
-				Write-Host ("Failed") -ForegroundColor Red
+				Write-Error -Message "Failed to register font in registry" -ErrorAction Continue
 			}
 			$AddKey = $false
 		}
@@ -99,16 +98,15 @@ function Install-Font {
 	}
  catch {
 		If ($Copy -eq $true) {
-			Write-Host ("Failed") -ForegroundColor Red
+			Write-Error -Message "Failed to copy font file" -ErrorAction Continue
 			$Copy = $false
 		}
 		If ($AddKey -eq $true) {
-			Write-Host ("Failed") -ForegroundColor Red
+			Write-Error -Message "Failed to register font in registry" -ErrorAction Continue
 			$AddKey = $false
 		}
 		Write-Warning $_.Exception.Message
 	}
-	Write-Host
 }
 
 # Define the repository details
@@ -143,5 +141,3 @@ foreach ($TtfFile in $TtfFiles) {
 # Clean up extracted files and downloaded zip file
 Remove-Item -Recurse -Force $ExtractPath
 Remove-Item -LiteralPath $ZipFile
-
-
