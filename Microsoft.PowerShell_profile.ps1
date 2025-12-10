@@ -22,7 +22,7 @@ Write-Information ("Service point security protocols in this session: " + [Net.S
 # As of April 2024, Microsoft now offers an official Nerd Font variant of Cascadia Code.
 # Make sure to configure your new fonts in Windows Terminal and VS Code.
 
-$RequiredModules = @("Terminal-Icons","posh-git")
+$RequiredModules = @("Terminal-Icons", "posh-git")
 
 foreach ($Module in $RequiredModules) {
     try {
