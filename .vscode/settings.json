@@ -1,0 +1,9 @@
+{
+  "editor.formatOnSave": true,
+  "[powershell]": {
+    "editor.tabSize": 4
+  },
+  "powershell.codeFormatting.preset": "OTBS",
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true
+}
