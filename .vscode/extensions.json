@@ -2,11 +2,9 @@
   "recommendations": [
     "ms-vscode.powershell",
     "prettier.prettier-vscode",
-    "redhat.vscode-yaml",
     "yzhang.markdown-all-in-one",
     "shd101wyy.markdown-preview-enhanced",
     "DavidAnson.vscode-markdownlint",
-    "formulahendry.code-runner",
     "GitHub.remotehub",
     "GitHub.vscode-pull-request-github",
     "github.vscode-github-actions",
