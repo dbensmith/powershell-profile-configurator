@@ -1,7 +1,7 @@
 {
   "recommendations": [
     "ms-vscode.powershell",
-    "prettier.prettier-vscode",
+    "esbenp.prettier-vscode",
     "yzhang.markdown-all-in-one",
     "shd101wyy.markdown-preview-enhanced",
     "DavidAnson.vscode-markdownlint",
