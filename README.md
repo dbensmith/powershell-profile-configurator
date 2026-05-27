@@ -1,26 +1,35 @@
-# powershell-profile-configurator
+# powershell-profile-configurator [DEPRECATED]
 
-Configures the user's PowerShell profile for Windows PowerShell (5.1), PowerShell Core (7+), and the integrated terminal for Visual Studio Code. Backs up existing profiles by making a copy in the same folder as the original. Personalised for the author's use; fork and customize to your heart's content!
+> [!WARNING]
+> **This repository is deprecated and no longer maintained.**
+> The configuration, scripts, and profile setup have been fully migrated to [chezmoi](https://www.chezmoi.io/) and integrated into the primary dotfiles repository.
 
-## What the configurator does
+---
 
-- Downloads and installs the latest version of the Cascadia Code font in `Install-CascadiaCode.ps1`
-- Copies `Microsoft.PowerShell_profile.ps1` to the current user's profile directory for each of the following consoles:
-  - Windows PowerShell (5.1)
-  - PowerShell Core (7+)
-  - Visual Studio Code (renamed to `Microsoft.VSCode_profile.ps1`)
-- For the PowerShell console the configurator script was run from:
-  - Sets the PSGallery repository to Trusted
-  - Installs the PowerShell modules [Oh My Posh](https://ohmyposh.dev), [Terminal Icons](https://github.com/devblackops/Terminal-Icons), and [posh-git](https://github.com/dahlbyk/posh-git)
-  - Opts out of the VMWare CEIP, if the PowerCLI module is installed, so it doesn't prompt you for telemetry the first time you use it
+## Why this repository was deprecated
 
-## What the included profile does
+All features previously managed by standalone scripts in this repository have been migrated to the chezmoi dotfiles management workflow to streamline system initialization, reduce code duplication, and avoid privilege escalation.
 
-- Imports the prerequisite modules described in the configurator, and if they are not present, installs them.
-- Configures the PowerShell terminal prompt with the Oh My Posh theme specified in the script (default: [slimfat](https://ohmyposh.dev/docs/themes#slimfat)).
-- Enables the TLS 1.2/1.3 security protocols for the PowerShell session.
+### Deprecated Features & Alternatives
 
-## How to use this
+| Deprecated Feature | Reason for Deprecation | Modern Replacement in Chezmoi |
+| :--- | :--- | :--- |
+| **`Install-CascadiaCode.ps1`** | Custom PowerShell font installer required Administrator elevation (UAC), manual GitHub API lookups, zip extractions, and writing to the system fonts registry hive. | **`oh-my-posh font install`**: Used dynamically within chezmoi's `run_once_` phase to download and register fonts (like `CaskaydiaCove`, `Cousine`, and `UbuntuMono`) at the user level without requiring admin privileges. |
+| **`Configure-Microsoft.PowerShell_profile.ps1`** | A custom script was required to handle path matching, file copying, and backups across different PowerShell hosts. It struggled to handle dynamic locations (e.g., OneDrive folder redirections) cleanly. | **Chezmoi Lifecycles**: Profile files are managed via a `.chezmoitemplates` template. A Windows-only `run_onchange_` script dynamically queries the active `MyDocuments` path (`[Environment]::GetFolderPath('MyDocuments')`) at runtime to safely deploy files to PowerShell, WindowsPowerShell, and VS Code. |
+| **Module Pre-installation** | Redundant step in the configurator script. | Moved to the `run_once_` bootstrap script inside the dotfiles repository. The profile itself remains self-healing and will download/import missing modules automatically on session start. |
 
-1. Edit `Microsoft.PowerShell_profile.ps1` and change `$Theme` to the [Oh My Posh theme](https://ohmyposh.dev/docs/themes) you wish to use.
-2. Using an elevated PowerShell prompt, run `Configure-Microsoft.PowerShell_profile.ps1`. Note that some of the configurator script's changes are only applied to the terminal it was run from.
+---
+
+## Active Configuration Workflow
+
+For active development and profile modification:
+
+1. **Edit the profile template**:
+   ```powershell
+   chezmoi edit --template ~/.chezmoitemplates/Microsoft.PowerShell_profile.ps1
+   ```
+2. **Apply changes**:
+   ```powershell
+   chezmoi apply
+   ```
+   This will automatically trigger the `run_onchange_install-powershell-profile.ps1` script to update the active profiles across all PowerShell hosts.
